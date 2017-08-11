@@ -1,0 +1,22 @@
+db.coll01.find().forEach(function (doc1) {
+    var doc2 = db.coll02.findOne({ id: doc1.id }, { name: 1 });
+    if (doc2 != null) {
+        doc1.name = doc2.name;
+        db.coll01.save(doc1);
+    }
+});
+
+
+================================
+db.trama.find({rpm:{$exists: false}}).forEach(function (doc1) {
+    var doc2 = db.trama_extra.findOne({trama:doc1});
+    if (doc2 != null) {
+        doc1.rpm = doc2.rpm;
+        doc1.fuel_rate = doc2.fuel_rate;
+        doc1.fuel_rate_100km = doc2.fuel_rate_100km;
+        doc1.total_fuel_used = doc2.total_fuel_used;
+        doc1.throttle_pos = doc2.throttle_pos;
+        doc1.eng_torque = doc2.eng_torque;
+        db.trama.save(doc1);
+    }
+});

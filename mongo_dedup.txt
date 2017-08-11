@@ -1,0 +1,40 @@
+db.trama.aggregate([
+    {$group:{
+        _id:{
+            dev_id:"$dev_id",
+            entity:"$entity",
+            dev_timestamp:"$dev_timestamp",
+        },
+        dups:{
+            $push:"$_id"
+        },
+        count:{
+            $sum:1
+        }
+    }},
+    {$match:{
+        count:{$gt:1}
+    }}
+]).forEach(function(doc){
+  doc.dups.shift();
+  db.trama_extra.remove({trama:{$in:doc.dups}});
+  db.trama.remove({_id:{$in:doc.dups}});
+});
+
+
+===========================del entity 25
+db.trama_extra.aggregate(
+  {$lookup: {
+    from: "trama", 
+    localField: "trama", 
+    foreignField: "_id", 
+    as: "trama"
+  }}, 
+  {$unwind: "$trama"}, 
+  {$match: {
+    "trama.entity": 25
+  }}
+).forEach(function(doc){
+  db.trama.remove({_id: doc.trama._id});
+  db.trama_extra.remove({_id: doc._id});
+  });
