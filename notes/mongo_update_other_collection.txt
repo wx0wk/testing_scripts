@@ -1,0 +1,8 @@
+db.coll01.find().forEach(function (doc1) {
+    var doc2 = db.coll02.findOne({ id: doc1.id }, { name: 1 });
+    if (doc2 != null) {
+        doc1.name = doc2.name;
+        doc1.<FIELD> = <doc2.<FIELD> and other operations>;
+        db.coll01.save(doc1);
+    }
+});
